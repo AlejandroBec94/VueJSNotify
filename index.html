@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Vue School Chat Room</title>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.3.1/firebase.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div id="chat" class="container">
+        <h1>Chat Bec</h1>
+        <div v-for="message in messages" class="card">
+
+            <div class="card-body">
+
+                <h6 class="card-subtitle mb-2 text-muted">{{ message.UserID }}</h6>
+                <p class="card-text">{{ message.UserName }} </p>
+
+            </div>
+
+        </div>
+
+        <hr>
+
+        <form @submit.prevent="storeMessage">
+
+            <div class="form-group">
+
+                <label for="">Message</label>
+                <textarea v-model="UserName" class="form-control"></textarea>
+
+            </div>
+            <div class="form-group">
+
+                <label for="">NickName:</label>
+                <input v-model="UserID" class="form-control">
+
+            </div>
+
+            <button class="btn btn-primary">Send</button>
+
+        </form>
+    </div>
+
+</body>
+
+
+</html>
+
+<script>
+    var config = {
+        apiKey: "AIzaSyCpljKpXwVnkJfTsXFyZtdvob-SUuxSj_M",
+        authDomain: "intranet-61443.firebaseapp.com",
+        databaseURL: "https://intranet-61443.firebaseio.com",
+        projectId: "intranet-61443",
+        storageBucket: "intranet-61443.appspot.com",
+        messagingSenderId: "120891199457"
+    };
+    firebase.initializeApp(config);
+
+    const database = firebase.database()
+
+
+    new Vue({
+
+        el: "#chat",
+
+        data: {
+            messages: [],
+            UserName: '',
+            UserID: 'Bec'
+        },
+
+        methods: {
+
+            storeMessage() {
+
+                /*this.messages.push({
+                    UserID: this.UserID,
+                    UserName: this.UserName
+                })*/
+                database.ref('messages').push({
+                    UserID: this.UserID,
+                    UserName: this.UserName
+                })
+                this.messageText = ''
+
+            }
+
+        },
+
+        created (){
+            database.ref('messages').on('child_added', snapshot => this.messages.push(snapshot.val()))
+        }
+
+    });
+</script>
